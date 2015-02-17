@@ -19,4 +19,5 @@ add_executable(meta.out
   src/main.cpp
   src/boat.cpp
   src/utils.cpp
+  src/solution.cpp
 )
