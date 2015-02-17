@@ -20,4 +20,7 @@ add_executable(meta.out
   src/boat.cpp
   src/utils.cpp
   src/solution.cpp
+  src/heuristic.hpp
+  src/heuristicFactory.hpp
+  src/descent.hpp
 )
