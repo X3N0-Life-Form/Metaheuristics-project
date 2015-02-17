@@ -1,5 +1,7 @@
 #include "solution.h"
 
+#include <algorithm>
+
 using namespace std;
 
 Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
@@ -7,7 +9,7 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
   for (int period = 0; period < number_of_periods; period++) {
     map<int, int> c_map;
     map<int, int> o_map;
-    map<int, set<int> > m_map;
+    map<int, vector<int> > m_map;
     set<int> h_set;
     set<int> out_set; // you can't be hosted by someone that's out
     // some of the crews have already met
@@ -40,8 +42,8 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
 	o_map[host_num] = capacity;
       }
       // these two crew have met each other
-      m_map[current_num].emplace(host_num);
-      m_map[host_num].emplace(current_num);
+      m_map[current_num].push_back(host_num);
+      m_map[host_num].push_back(current_num);
     }
     crew_map.push_back(c_map);
     occupation_map.push_back(o_map);
@@ -53,8 +55,38 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
 
 int Solution::calculateCost() {
   int cost = 0;
+  // Constraint #2:
+  //   Two crews meet at most once.
+  map<int, vector<int> >& last_meeting_map = meeting_map.back();
+  for (Boat crew : boats) {
+    vector<int>& crew_met = last_meeting_map[crew.getNumber()];
+    for (int i = 1; i <= (int) boats.size(); i++) {
+      int c = count(crew_met.begin(), crew_met.end(), i);
+      if (c > 1) {
+	cost += c - 1;
+      }
+    }
+  }
+
   for (int period = 0; period < number_of_periods; period++) {
-    
+    // Constraint #1:
+    //   Each guest crew moves to a different host at each time period.
+    if (period > 0) {
+      for (int crew_num = 1; crew_num <= (int) boats.size(); crew_num++) {
+	if (crew_map[period][crew_num] != crew_map[period - 1][crew_num]) {
+	  cost++;
+	}
+      }
+    }
+    // Constraint #3:
+    //   The capacities of the host boats must be respected.
+    for (int host_num = 1; host_num <= (int) boats.size(); host_num++) {
+      if (host_set[period].find(host_num) != host_set[period].end()) {
+	if (occupation_map[period][host_num] > boats[host_num - 1].getCapacity()) {
+	  cost++;
+	}
+      }
+    }
   }
   this->cost = cost;
   return cost;
@@ -84,7 +116,7 @@ std::vector<std::map<int, int> >& Solution::getOccupation_map() {
   return occupation_map;
 }
 
-std::vector<std::map<int, std::set<int> > >& Solution::getMeeting_map() {
+std::vector<std::map<int, std::vector<int> > >& Solution::getMeeting_map() {
   return meeting_map;
 }
 

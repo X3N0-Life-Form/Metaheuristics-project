@@ -12,6 +12,9 @@ class Solution {
   int number_of_periods;
   int cost;
   std::vector<Boat>& boats;
+  /**
+   * Which crew are hosting for this period.
+   */
   std::vector<std::set<int> > host_set;
   /**
    * crew ==> boat currently on
@@ -24,7 +27,7 @@ class Solution {
   /**
    * crew ==> other crew met so far
    */
-  std::vector<std::map<int, std::set<int> > > meeting_map;
+  std::vector<std::map<int, std::vector<int> > > meeting_map;
  public:
   Solution(int number_of_time_periods, std::vector<Boat>& boats);
 
@@ -36,7 +39,7 @@ class Solution {
   std::vector<std::set<int> >& getHost_set();
   std::vector<std::map<int, int> >& getCrew_map();
   std::vector<std::map<int, int> >& getOccupation_map();
-  std::vector<std::map<int, std::set<int> > >& getMeeting_map();
+  std::vector<std::map<int, std::vector<int> > >& getMeeting_map();
 };
 
 std::ostream& operator<<(std::ostream& out, Solution& right);
