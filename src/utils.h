@@ -6,6 +6,8 @@
 #include <fstream>
 #include "boat.h"
 
+#define LINE_SIZE 1024
+
 void parse(std::string file_path, std::vector<Boat>& vect);
 std::vector<std::string> tokenize(std::string toSplit, std::string token);
 
