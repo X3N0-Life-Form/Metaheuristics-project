@@ -1,10 +1,12 @@
 #ifndef HEURISTIC_FACTORY_H
 #define HEURISTIC_FACTORY_H
 
-#include "descent.hpp"
+#include "localSearch.hpp"
 
 enum HeuristicType {
-  DESCENT
+  LOCAL_SEARCH,
+  METRO,
+  TABU_SEARCH
 };
 
 class HeuristicFactory {
@@ -13,10 +15,10 @@ private:
 public:
   static Heuristic* createHeuristic(Solution& initialSolution, HeuristicType type) {
     switch (type) {
-    case DESCENT:
-      return new Descent(initialSolution);
+    case LOCAL_SEARCH:
+      return new LocalSearch(initialSolution);
     default:
-      return new Descent(initialSolution);
+      return new LocalSearch(initialSolution);
     }
   }
 };

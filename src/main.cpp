@@ -10,13 +10,17 @@ using namespace std;
 
 vector<Boat> boats;
 int num_periods = 8;
-HeuristicType type = DESCENT;
+HeuristicType type = LOCAL_SEARCH;
 
 HeuristicType identifyHeuristicType(string arg) {
-  if (arg == string("descent")) {
-    return DESCENT;
+  if (arg == string("ls")) {
+    return LOCAL_SEARCH;
+  } else if (arg == string("metro")) {
+    return METRO;
+  } else if (arg == string("ts")) {
+    return TABU_SEARCH;
   } else {
-    return DESCENT;
+    return LOCAL_SEARCH;
   }
 }
 

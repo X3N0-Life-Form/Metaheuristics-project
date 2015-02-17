@@ -22,5 +22,5 @@ add_executable(meta.out
   src/solution.cpp
   src/heuristic.hpp
   src/heuristicFactory.hpp
-  src/descent.hpp
+  src/localSearch.hpp
 )

@@ -3,10 +3,9 @@
 
 #include "heuristic.hpp"
 
-class Descent : public Heuristic {
-
+class LocalSearch : public Heuristic {
 public:
-  Descent(Solution& solution) : Heuristic(solution) {}
+  LocalSearch(Solution& solution) : Heuristic(solution) {}
   virtual Solution& applyHeuristic() {
     return solution;
   }
