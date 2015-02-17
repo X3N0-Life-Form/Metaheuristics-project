@@ -9,6 +9,7 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
     map<int, int> o_map;
     map<int, set<int> > m_map;
     set<int> h_set;
+    set<int> out_set; // you can't be hosted by someone that's out
     // some of the crews have already met
     if (period > 0) {
       m_map = meeting_map[period - 1];
@@ -16,9 +17,19 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
     //TODO: a lot of these sub-routines can probably be extracted
     // for search purposes
     for (Boat current_crew : boats) {
+      int current_num = current_crew.getNumber();
+      // no need to go anywhere if we are already hosting
+      if (h_set.find(current_num) != h_set.end()) {
+	continue;
+      } else {
+	out_set.emplace(current_num);
+      }
       // position this crew
       int host_num = (rand() % boats.size()) + 1;
-      c_map.emplace(current_crew.getNumber(), host_num);
+      // preferably someplace that's not deserted
+      while (out_set.find(host_num) != out_set.end())
+	host_num = (rand() % boats.size()) + 1;
+      c_map.emplace(current_num, host_num);
       // update host set
       h_set.emplace(host_num);
       // update capacity
@@ -29,17 +40,32 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
 	o_map[host_num] = capacity;
       }
       // these two crew have met each other
-      m_map[current_crew.getNumber()].emplace(host_num);
-      m_map[host_num].emplace(current_crew.getNumber());
+      m_map[current_num].emplace(host_num);
+      m_map[host_num].emplace(current_num);
     }
     crew_map.push_back(c_map);
     occupation_map.push_back(o_map);
     meeting_map.push_back(m_map);
     host_set.push_back(h_set);
   }
+  calculateCost();
 }
+
+int Solution::calculateCost() {
+  int cost = 0;
+  for (int period = 0; period < number_of_periods; period++) {
+    
+  }
+  this->cost = cost;
+  return cost;
+}
+
 int Solution::getNumber_of_periods() const {
   return number_of_periods;
+}
+
+int Solution::getCost() const {
+  return cost;
 }
 
 vector<Boat>& Solution::getBoats() const {
@@ -71,10 +97,15 @@ ostream& operator<<(ostream& out, Solution& right) {
     out << "\tcrew positions\toccupation/capacity\n";
     for (unsigned int j = 1; j <= right.getBoats().size(); j++) {
       int host_num = right.getCrew_map()[i][j];
-      out << "\t" << j << " ==> " << host_num;
-      out << " \t" << right.getOccupation_map()[i][host_num] << "/" << right.getBoats()[host_num].getCapacity();
+      if (host_num != 0) {
+	out << "\t" << j << " ==> " << host_num;
+	out << " \t" << right.getOccupation_map()[i][host_num] << "/" << right.getBoats()[host_num].getCapacity();
+      } else {
+	out << "\t" << j << " ==> host";
+      }
       out << endl;
     }
   }
+  out << "cost = " << right.getCost();
   return out;
 }

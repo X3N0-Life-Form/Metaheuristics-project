@@ -10,6 +10,7 @@
 class Solution {
  private:
   int number_of_periods;
+  int cost;
   std::vector<Boat>& boats;
   std::vector<std::set<int> > host_set;
   /**
@@ -30,6 +31,7 @@ class Solution {
   int calculateCost();
 
   int getNumber_of_periods() const;
+  int getCost() const;
   std::vector<Boat>& getBoats() const;
   std::vector<std::set<int> >& getHost_set();
   std::vector<std::map<int, int> >& getCrew_map();
