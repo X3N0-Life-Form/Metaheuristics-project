@@ -2,24 +2,36 @@
 #define DESCENT_H
 
 #include "heuristic.hpp"
+#include <iostream>
+using namespace std;
 
 class LocalSearch : public Heuristic {
+private:
+  bool b_stop;
 public:
-  LocalSearch(Solution& solution) : Heuristic(solution) {}
+  LocalSearch(Solution& solution) : Heuristic(solution), b_stop(false) {}
 
   virtual Solution& applyHeuristic() {
+    auto it = solution.getBoats().begin();
+    int i = 0;
     while (!stop()) {
       Solution current(solution);
-      current.moveHost();
+      Boat& boat = *it;
+      i++;
+      //current.moveHost(-1, -1, boat.getNumber());
+      current.moveSwap();
       if (current.getCost() <= solution.getCost()) {
-	//solution = current;
+	solution = current;
       }
+      it++;
+      b_stop = it == solution.getBoats().end();
     }
+    cout << "loopcount: " << i << endl;
     return solution;
   }
 
   virtual bool stop() {
-    return false;
+    return b_stop;
   }
 };
 

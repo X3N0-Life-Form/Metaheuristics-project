@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <list>
 #include "boat.h"
 
 class Solution {
@@ -27,7 +28,11 @@ class Solution {
   /**
    * crew ==> other crew met so far
    */
-  std::vector<std::map<int, std::vector<int> > > meeting_map;
+  std::vector<std::map<int, std::list<int> > > meeting_map;
+
+ protected:
+  std::list<int>::iterator m_map_find(int period, int target, int toFind);
+
  public:
   Solution(int number_of_time_periods, std::vector<Boat>& boats);
 
@@ -45,7 +50,9 @@ class Solution {
   std::vector<std::set<int> >& getHost_set();
   std::vector<std::map<int, int> >& getCrew_map();
   std::vector<std::map<int, int> >& getOccupation_map();
-  std::vector<std::map<int, std::vector<int> > >& getMeeting_map();
+  std::vector<std::map<int, std::list<int> > >& getMeeting_map();
+
+  Solution& operator=(const Solution&);
 };
 
 std::ostream& operator<<(std::ostream& out, Solution& right);

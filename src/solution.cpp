@@ -4,12 +4,23 @@
 
 using namespace std;
 
+list<int>::iterator Solution::m_map_find(int period, int target, int toFind) {
+  list<int>::iterator it;
+  for (it = meeting_map[period][target].begin();
+       it != meeting_map[period][target].end(); it++) {
+    if (*it == toFind) {
+      return it;
+    }
+  }
+  return it;
+}
+
 Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
   number_of_periods(number_of_periods), boats(boats) {
   for (int period = 0; period < number_of_periods; period++) {
     map<int, int> c_map;
     map<int, int> o_map;
-    map<int, vector<int> > m_map;
+    map<int, list<int> > m_map;
     set<int> h_set;
     set<int> out_set; // you can't be hosted by someone that's out
     // some of the crews have already met
@@ -57,9 +68,9 @@ int Solution::calculateCost() {
   int cost = 0;
   // Constraint #2:
   //   Two crews meet at most once.
-  map<int, vector<int> >& last_meeting_map = meeting_map.back();
+  map<int, list<int> >& last_meeting_map = meeting_map.back();
   for (Boat crew : boats) {
-    vector<int>& crew_met = last_meeting_map[crew.getNumber()];
+    list<int>& crew_met = last_meeting_map[crew.getNumber()];
     for (int i = 1; i <= (int) boats.size(); i++) {
       int c = count(crew_met.begin(), crew_met.end(), i);
       if (c > 1) {
@@ -101,35 +112,74 @@ void Solution::moveHost(int targetPeriod, int targetCrew, int targetHost) {
     while (h_set.find(targetHost) == h_set.end())
       targetHost = (rand() % boats.size()) + 1;
   }
+  //cout << "[moveHost] " << targetPeriod << ": " 
+  //     <<  targetCrew << " ==> " << targetHost << endl;
+  int prevHost = crew_map[targetPeriod][targetCrew];
   crew_map[targetPeriod][targetCrew] = targetHost;
-  occupation_map[targetPeriod][targetCrew] -= boats[targetCrew].getCrew_size();
-  //  meeting_map[targetPeriod][] well, shit
-  //grab index in this vector
-  // and remove the same index from future vectors
-  // (since that should be the first occurence)
-  int mm_h = 0, mm_c = 0;
-  for (int c : meeting_map[targetPeriod][targetCrew]) {
-    if (c == targetHost) {
-      break;
-    } else {
-      mm_h++;
-    }
-  }
-  for (int c : meeting_map[targetPeriod][targetHost]) {
-    if (c == targetCrew) {
-      break;
-    } else {
-      mm_c++;
-    }
-  }
+  occupation_map[targetPeriod][prevHost]   -= boats[targetCrew - 1].getCrew_size();
+  occupation_map[targetPeriod][targetHost] += boats[targetCrew - 1].getCrew_size();
+  // update the meeting map
   for (int i = targetPeriod; i < number_of_periods; i++) {
-    meeting_map[i][targetHost].erase(meeting_map[i][targetHost].begin() + mm_h);
-    meeting_map[i][targetCrew].erase( meeting_map[i][targetCrew].begin() + mm_c);
+    // remove them from each other's meeting map
+    for (list<int>::iterator it = meeting_map[i][prevHost].begin();
+	 it != meeting_map[i][prevHost].end();
+	 it++) {
+      if (*it == targetCrew) {
+	meeting_map[i][prevHost].erase(it);
+	break;
+      }
+    }
+    for (list<int>::iterator it = meeting_map[i][targetCrew].begin();
+	 it != meeting_map[i][targetCrew].end();
+	 it++) {
+      if (*it == prevHost) {
+	meeting_map[i][targetCrew].erase(it);
+	break;
+      }
+    }
+    // add the new meeting to the meeting map
+    meeting_map[i][targetHost].push_back(targetCrew);
+    meeting_map[i][targetCrew].push_back(targetHost);
   }
+  
+  // recalculate cost
+  calculateCost();//TODO: replace this with updateCost() when it's implemented
 }
 
 void Solution::moveSwap() {
+  int targetPeriod = rand() % number_of_periods;
+  int target1 = (rand() % boats.size()) + 1;
+  int target2 = (rand() % boats.size()) + 1;
+  while (target1 == target2) target2 = (rand() % boats.size()) + 1;
 
+  int t1Host = crew_map[targetPeriod][target1];
+  int t2Host = crew_map[targetPeriod][target2];
+  crew_map[targetPeriod][target1] = crew_map[targetPeriod][target2];
+  crew_map[targetPeriod][target2] = t1Host;
+
+  occupation_map[targetPeriod][t1Host] -= boats[target1 - 1].getCrew_size();
+  occupation_map[targetPeriod][t1Host] += boats[target2 - 1].getCrew_size();
+  occupation_map[targetPeriod][t2Host] -= boats[target2 - 1].getCrew_size();
+  occupation_map[targetPeriod][t2Host] += boats[target1 - 1].getCrew_size();
+
+  for (int i = targetPeriod; i < number_of_periods; i++) {
+    // Remove the old things
+    list<int>::iterator it = m_map_find(i, t1Host, target1);
+    if (it != meeting_map[i][t1Host].end()) meeting_map[i][t1Host].erase(it);
+    it = m_map_find(i, target1, t1Host);
+    if (it != meeting_map[i][target1].end()) meeting_map[i][target1].erase(it);
+    it = m_map_find(i, t2Host, target2);
+    if (it != meeting_map[i][t2Host].end()) meeting_map[i][t2Host].erase(it);
+    it = m_map_find(i, target2, t2Host);
+    if (it != meeting_map[i][target2].end()) meeting_map[i][target2].erase(it);
+    // Add the new things
+    meeting_map[i][t1Host].push_back(target2);
+    meeting_map[i][target2].push_back(t1Host);
+    meeting_map[i][t2Host].push_back(target1);
+    meeting_map[i][target1].push_back(t2Host);
+  }
+
+  calculateCost();
 }
 
 /////////////////////////
@@ -160,10 +210,20 @@ std::vector<std::map<int, int> >& Solution::getOccupation_map() {
   return occupation_map;
 }
 
-std::vector<std::map<int, std::vector<int> > >& Solution::getMeeting_map() {
+std::vector<std::map<int, std::list<int> > >& Solution::getMeeting_map() {
   return meeting_map;
 }
 
+Solution& Solution::operator=(const Solution& other) {
+  number_of_periods = other.number_of_periods;
+  cost = other.cost;
+  boats = other.boats;
+  host_set = other.host_set;
+  crew_map = other.crew_map;
+  occupation_map = other.occupation_map;
+  meeting_map = other.meeting_map;
+  return *this;
+}
 
 
 ostream& operator<<(ostream& out, Solution& right) {

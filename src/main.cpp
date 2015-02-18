@@ -40,11 +40,12 @@ void dealWithArgs(int argc, char** argv) {
 
 
 int main(int argc, char** argv) {
+  srand(time(NULL));
   dealWithArgs(argc, argv);
   Solution initial_solution(num_periods, boats);
   cout << "Initial cost = " << initial_solution.getCost() << endl;
   Heuristic* heuristic = HeuristicFactory::createHeuristic(initial_solution, type);
   Solution& final_solution = heuristic->applyHeuristic(); // don't tell the national socialists
-  cout << final_solution << endl;
+  cout << "Final cost: " << final_solution.getCost() << endl;
   delete heuristic;
 }
