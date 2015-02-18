@@ -92,6 +92,50 @@ int Solution::calculateCost() {
   return cost;
 }
 
+void Solution::moveHost(int targetPeriod, int targetCrew, int targetHost) {
+  if (targetPeriod == -1) targetPeriod = rand() % number_of_periods;
+  if (targetCrew == -1) targetCrew = (rand() % boats.size()) + 1;
+  if (targetHost == -1) {
+    set<int>& h_set = host_set[targetPeriod];
+    targetHost = (rand() % boats.size()) + 1;
+    while (h_set.find(targetHost) == h_set.end())
+      targetHost = (rand() % boats.size()) + 1;
+  }
+  crew_map[targetPeriod][targetCrew] = targetHost;
+  occupation_map[targetPeriod][targetCrew] -= boats[targetCrew].getCrew_size();
+  //  meeting_map[targetPeriod][] well, shit
+  //grab index in this vector
+  // and remove the same index from future vectors
+  // (since that should be the first occurence)
+  int mm_h = 0, mm_c = 0;
+  for (int c : meeting_map[targetPeriod][targetCrew]) {
+    if (c == targetHost) {
+      break;
+    } else {
+      mm_h++;
+    }
+  }
+  for (int c : meeting_map[targetPeriod][targetHost]) {
+    if (c == targetCrew) {
+      break;
+    } else {
+      mm_c++;
+    }
+  }
+  for (int i = targetPeriod; i < number_of_periods; i++) {
+    meeting_map[i][targetHost].erase(meeting_map[i][targetHost].begin() + mm_h);
+    meeting_map[i][targetCrew].erase( meeting_map[i][targetCrew].begin() + mm_c);
+  }
+}
+
+void Solution::moveSwap() {
+
+}
+
+/////////////////////////
+/// Getters / Setters ///
+/////////////////////////
+
 int Solution::getNumber_of_periods() const {
   return number_of_periods;
 }

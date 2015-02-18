@@ -32,6 +32,12 @@ class Solution {
   Solution(int number_of_time_periods, std::vector<Boat>& boats);
 
   int calculateCost();
+  //  int updateCost();
+  /**
+   * Moves a crew to a different host. Setting the values to -1 picks one at random.
+   */
+  void moveHost(int targetPeriod = -1, int targetCrew = -1, int targetHost = -1);
+  void moveSwap();
 
   int getNumber_of_periods() const;
   int getCost() const;
