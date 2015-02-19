@@ -24,11 +24,10 @@ public:
 	  for (int target2 = 1; target2 <= (int) boats.size(); target2++) {
 	    if (target1 == target2) continue;
 	    current.moveSwap(period, target1, target2);
-	    if (current.getCost() < solution.getCost()) {
+	    if (selectionCondition(current)) {
 	      cout << "cost was improved by "
 		   << solution.getCost() - current.getCost() << endl;
-	      prev_cost = solution.getCost();
-	      solution = current;
+	      validateSwap(period, target1, target2, current);
 	    }
 	  }
 	}
@@ -41,6 +40,16 @@ public:
   virtual bool stop() {
     cout << solution.getCost() << " == "  << prev_cost << "?\n";
     return solution.getCost() == prev_cost;
+  }
+
+  virtual bool selectionCondition(Solution& current) {
+    return current.getCost() < solution.getCost();
+  }
+
+  virtual void validateSwap(int period, int target1, int target2,
+			    Solution& current) {
+    prev_cost = solution.getCost();
+    solution = current;
   }
 };
 

@@ -16,6 +16,9 @@ class Heuristic {
   virtual ~Heuristic() {}
   virtual Solution& applyHeuristic() = 0;
   virtual bool stop() = 0;
+  virtual bool selectionCondition(Solution& current) = 0;
+  virtual void validateSwap(int period, int target1, int target2,
+			    Solution& current) = 0;
 };
 
 #endif
