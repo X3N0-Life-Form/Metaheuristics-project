@@ -54,13 +54,16 @@ class Solution {
    */
   int calculateConstraint3(int period, int host_num);
   //  int updateCost();
-  int getConflict(int targetPeriod);
+  /**
+   * @return The crew with the most conflicts for a given period.
+   */
+  int getMostConflicted(int targetPeriod);
 
   /**
    * Moves a crew to a different host. Setting the values to -1 picks one at random.
    */
   void moveHost(int targetPeriod = -1, int targetCrew = -1, int targetHost = -1);
-  void moveSwap();
+  void moveSwap(int period, int target1, int target2);
 
   int getNumber_of_periods() const;
   int getCost() const;

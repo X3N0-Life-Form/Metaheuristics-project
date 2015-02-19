@@ -104,6 +104,7 @@ int Solution::calculateCostPeriod(int period, bool includeC2) {
 
 
 int Solution::calculateConstraint1(int period, int crew_num) {
+  if (period == 0) return 0;
   if (crew_map[period][crew_num] != crew_map[period - 1][crew_num]) {
     return 1;
   } else {
@@ -131,16 +132,18 @@ int Solution::calculateConstraint3(int period, int host_num) {
   }
 }
 
-int Solution::getConflict(int targetPeriod) {
+int Solution::getMostConflicted(int targetPeriod) {
   int mostConflicted = 1;
   int mostConflicts = 0;
+  //cout << "finding conflicts in period " << targetPeriod <<endl;
   for (int crew_num = 1; crew_num <= (int) boats.size(); crew_num++) {
     int conflicts = calculateConstraint1(targetPeriod, crew_num);
-    //c2
-    //c3
+    conflicts += calculateConstraint2(targetPeriod, crew_num);
+    conflicts += calculateConstraint3(targetPeriod, crew_num);
     if (conflicts > mostConflicts) {
       mostConflicted = crew_num;
       mostConflicts = conflicts;
+      //cout << crew_num << " has " << conflicts << " conflicts" << endl;
     }
   }
   return mostConflicted;
@@ -189,12 +192,7 @@ void Solution::moveHost(int targetPeriod, int targetCrew, int targetHost) {
   calculateCost();//TODO: replace this with updateCost() when it's implemented
 }
 
-void Solution::moveSwap() {
-  int targetPeriod = rand() % number_of_periods;
-  int target1 = (rand() % boats.size()) + 1;
-  int target2 = (rand() % boats.size()) + 1;
-  while (target1 == target2) target2 = (rand() % boats.size()) + 1;
-
+void Solution::moveSwap(int targetPeriod, int target1, int target2) {
   int t1Host = crew_map[targetPeriod][target1];
   int t2Host = crew_map[targetPeriod][target2];
   crew_map[targetPeriod][target1] = crew_map[targetPeriod][target2];
@@ -205,6 +203,18 @@ void Solution::moveSwap() {
   occupation_map[targetPeriod][t2Host] -= boats[target2 - 1].getCrew_size();
   occupation_map[targetPeriod][t2Host] += boats[target1 - 1].getCrew_size();
 
+  /*/
+  cout << "targets are " << target1 << " and " << target2 << endl;
+  cout << "before\n";
+  for (int i : meeting_map[targetPeriod][t1Host]) cout << i << " ";
+  cout << " from " << t1Host << endl;
+  for (int i : meeting_map[targetPeriod][t2Host]) cout << i << " ";
+  cout << " from " << t2Host << endl;
+  for (int i : meeting_map[targetPeriod][target1]) cout << i << " ";
+  cout << " from " << target1 << endl;
+  for (int i : meeting_map[targetPeriod][target2]) cout << i << " ";
+  cout << " from " << target2 << endl;
+  /*/
   for (int i = targetPeriod; i < number_of_periods; i++) {
     // Remove the old things
     list<int>::iterator it = m_map_find(i, t1Host, target1);
@@ -221,6 +231,17 @@ void Solution::moveSwap() {
     meeting_map[i][t2Host].push_back(target1);
     meeting_map[i][target1].push_back(t2Host);
   }
+  /*/
+  cout << "after\n";
+  for (int i : meeting_map[targetPeriod][t1Host]) cout << i << " ";
+  cout << " from " << t1Host << endl;
+  for (int i : meeting_map[targetPeriod][t2Host]) cout << i << " ";
+  cout << " from " << t2Host << endl;
+  for (int i : meeting_map[targetPeriod][target1]) cout << i << " ";
+  cout << " from " << target1 << endl;
+  for (int i : meeting_map[targetPeriod][target2]) cout << i << " ";
+  cout << " from " << target2 << endl;
+  /*/
 
   calculateCost();
 }
