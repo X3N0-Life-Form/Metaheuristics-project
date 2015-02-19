@@ -66,41 +66,84 @@ Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
 
 int Solution::calculateCost() {
   int cost = 0;
-  // Constraint #2:
-  //   Two crews meet at most once.
-  map<int, list<int> >& last_meeting_map = meeting_map.back();
+  // C2
+  // Note: in theory, we only need to calculate it for the last period.
   for (Boat crew : boats) {
-    list<int>& crew_met = last_meeting_map[crew.getNumber()];
-    for (int i = 1; i <= (int) boats.size(); i++) {
-      int c = count(crew_met.begin(), crew_met.end(), i);
-      if (c > 1) {
-	cost += c - 1;
-      }
-    }
+    cost += calculateConstraint2(number_of_periods - 1, crew.getNumber());
   }
 
+  // C1 + C3
   for (int period = 0; period < number_of_periods; period++) {
-    // Constraint #1:
-    //   Each guest crew moves to a different host at each time period.
-    if (period > 0) {
-      for (int crew_num = 1; crew_num <= (int) boats.size(); crew_num++) {
-	if (crew_map[period][crew_num] != crew_map[period - 1][crew_num]) {
-	  cost++;
-	}
-      }
-    }
-    // Constraint #3:
-    //   The capacities of the host boats must be respected.
-    for (int host_num = 1; host_num <= (int) boats.size(); host_num++) {
-      if (host_set[period].find(host_num) != host_set[period].end()) {
-	if (occupation_map[period][host_num] > boats[host_num - 1].getCapacity()) {
-	  cost++;
-	}
-      }
-    }
+    cost += calculateCostPeriod(period);
   }
   this->cost = cost;
   return cost;
+}
+
+int Solution::calculateCostPeriod(int period, bool includeC2) {
+  int cost = 0;
+  // Constraint #1:
+  if (period > 0) {
+    for (int crew_num = 1; crew_num <= (int) boats.size(); crew_num++) {
+      cost += calculateConstraint1(period, crew_num);
+    }
+  }
+
+  // Constraint #3 + #2:
+  for (int host_num = 1; host_num <= (int) boats.size(); host_num++) {
+    if (host_set[period].find(host_num) != host_set[period].end()) {
+      cost += calculateConstraint3(period, host_num);
+    }
+
+    if (includeC2) {
+      cost += calculateConstraint2(period, host_num);
+    }
+  }
+  return cost;
+}
+
+
+int Solution::calculateConstraint1(int period, int crew_num) {
+  if (crew_map[period][crew_num] != crew_map[period - 1][crew_num]) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int Solution::calculateConstraint2(int period, int crew_num) {
+  list<int>& crew_met = meeting_map[period][crew_num];
+  int cost = 0;
+  for (int i = 1; i <= (int) boats.size(); i++) {
+    int c = count(crew_met.begin(), crew_met.end(), i);
+    if (c > 1) {
+	cost += c - 1;
+    }
+  }
+  return cost;
+}
+
+int Solution::calculateConstraint3(int period, int host_num) {
+  if (occupation_map[period][host_num] > boats[host_num - 1].getCapacity()) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+int Solution::getConflict(int targetPeriod) {
+  int mostConflicted = 1;
+  int mostConflicts = 0;
+  for (int crew_num = 1; crew_num <= (int) boats.size(); crew_num++) {
+    int conflicts = calculateConstraint1(targetPeriod, crew_num);
+    //c2
+    //c3
+    if (conflicts > mostConflicts) {
+      mostConflicted = crew_num;
+      mostConflicts = conflicts;
+    }
+  }
+  return mostConflicted;
 }
 
 void Solution::moveHost(int targetPeriod, int targetCrew, int targetHost) {
@@ -181,6 +224,8 @@ void Solution::moveSwap() {
 
   calculateCost();
 }
+
+
 
 /////////////////////////
 /// Getters / Setters ///

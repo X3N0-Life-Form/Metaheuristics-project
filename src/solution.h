@@ -37,7 +37,25 @@ class Solution {
   Solution(int number_of_time_periods, std::vector<Boat>& boats);
 
   int calculateCost();
+  int calculateCostPeriod(int period, bool includeC2 = false);
+  /**
+   * Constraint #1:
+   *   Each guest crew moves to a different host at each time period.
+   */
+  int calculateConstraint1(int period, int crew_num);
+  /**
+   * Constraint #2:
+   *   Two crews meet at most once.
+   */
+  int calculateConstraint2(int period, int crew_num);
+  /**
+   * Constraint #3:
+   *   The capacities of the host boats must be respected.
+   */
+  int calculateConstraint3(int period, int host_num);
   //  int updateCost();
+  int getConflict(int targetPeriod);
+
   /**
    * Moves a crew to a different host. Setting the values to -1 picks one at random.
    */
