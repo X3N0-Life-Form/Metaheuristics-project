@@ -17,8 +17,21 @@
 
 \chapter{Progressive Party Problem}
 \section{Description}
-
 %description
+
+
+\subsection{Contraintes de validité}
+
+\subsection{Contraintes de qualité}
+\subsubsection{Contrainte 1}
+
+\subsubsection{Contrainte 2}
+
+\subsubsection{Contrainte 3}
+
+\subsection{Calcul des coûts}
+
+
 
 \pagebreak
 \section{État de l'art}
@@ -28,16 +41,36 @@
 \section{Structure du programme}
 \subsection{Représentation d'une solution}
 
-\subsection{Calcul des coûts}
+% nouvelle représentation:
+%	idée: se débarasser d'une contrainte de par la structure
+%		(un peu comme avec les reines)
+%	mapper les pairs de rencontres et leur attribuer une période?
+%	[équipage][periode] = liste invitéd
+%nevermind, this is all stupid
 
 \subsection{Modélisation des heuristiques}
 
+
+
 \section{Heuristiques implémentées}
-\subsection{Descente exhaustive}
+\subsection{Descente best fit}
+\paragraph{}
+La première heuristique implémentée est une exploration descendante type \textit{Best Fit}: pour un voisinage donné,
+on explore toutes les solutions possibles et on retient la plus améliorante. 
 
 \subsection{Recherche locale}
 
-\subsection{Recherche tabu}
+\subsection{Recherche tabou}
+
+\section{Voisinages considérés}
+\subsection{One Move}
+
+
+\subsection{Swap}
+On choisit deux équipages pour une période donnée, et on échange leur hote.
+
+\subsection{Plus grand conflit}
+
 
 \pagebreak
 \section{Résultats}
