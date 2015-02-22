@@ -1,6 +1,11 @@
 *~
 *.pdf
 
+# Tex files
+*.aux
+*.log
+*.toc
+
 # CMake files
 *.cmake
 Makefile
