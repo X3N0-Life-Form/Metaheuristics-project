@@ -22,6 +22,7 @@ public:
       for (int period = 0; period < number_of_periods; period++) {
 	for (int target1 = 1; target1 <= (int) boats.size(); target1++) {
 	  for (int target2 = 1; target2 <= (int) boats.size(); target2++) {
+	    //change that back into random movement if needed
 	    if (target1 == target2) continue;
 	    current.moveSwap(period, target1, target2);
 	    if (selectionCondition(current)) {
