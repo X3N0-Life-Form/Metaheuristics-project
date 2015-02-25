@@ -1,14 +1,16 @@
 #ifndef LOCAL_DESCENT_H
 #define LOCAL_DESCENT_H
 
-#include "localSearch.hpp"
+#include "heuristic.hpp"
+#include <iostream>
+using namespace std;
 
-class LocalDescent : public LocalSearch {
-private:
+class LocalDescent : public Heuristic {
+protected:
   int prev_cost;
 public:
   LocalDescent(Solution& solution) :
-    LocalSearch(solution),
+    Heuristic(solution),
     prev_cost(-1) {}
 
   virtual Solution& applyHeuristic() {
@@ -23,8 +25,8 @@ public:
 	    if (target1 == target2) continue;
 	    current.moveSwap(period, target1, target2);
 	    if (selectionCondition(current)) {
-	      cout << "cost was improved by "
-		   << solution.getCost() - current.getCost() << endl;
+	      //cout << "cost was improved by "
+	      //	   << solution.getCost() - current.getCost() << endl;
 	      validateSwap(period, target1, target2, current);
 	    }
 	  }
@@ -33,6 +35,21 @@ public:
     }
     //cout << "loopcount: " << i << endl;
     return solution;
+  }
+
+  virtual bool stop() {
+    //cout << solution.getCost() << " == "  << prev_cost << "?\n";
+    return solution.getCost() == prev_cost;
+  }
+
+  virtual bool selectionCondition(Solution& current) {
+    return current.getCost() < solution.getCost();
+  }
+
+  virtual void validateSwap(int period, int target1, int target2,
+			    Solution& current) {
+    prev_cost = solution.getCost();
+    solution = current;
   }
 };
 

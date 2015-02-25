@@ -15,6 +15,7 @@ list<int>::iterator Solution::m_map_find(int period, int target, int toFind) {
   return it;
 }
 
+//TODO: add some randomness
 Solution::Solution(int number_of_periods, std::vector<Boat>& boats) :
   number_of_periods(number_of_periods), boats(boats) {
   for (int period = 0; period < number_of_periods; period++) {

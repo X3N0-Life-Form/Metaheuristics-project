@@ -1,17 +1,19 @@
 #ifndef LOCAL_SEARCH_H
 #define LOCAL_SEARCH_H
 
-#include "heuristic.hpp"
-#include <iostream>
-using namespace std;
+#include "localDescent.hpp"
 
-class LocalSearch : public Heuristic {
-private:
-  int prev_cost;
+
+class LocalSearch : public LocalDescent {
+protected:
+  double probability;
+  double proba_growth;
 public:
   LocalSearch(Solution& solution) :
-    Heuristic(solution),
-    prev_cost(-1) {}
+    LocalDescent(solution),
+    probability(0.05),
+    proba_growth(0.1)
+  {}
 
   virtual Solution& applyHeuristic() {
     //int i = 0;
@@ -26,28 +28,27 @@ public:
 
       current.moveSwap(period, target1, target2);
       if (selectionCondition(current)) {
-	cout << "cost was improved by "
-	     << solution.getCost() - current.getCost() << endl;
+	//cout << "cost was improved by "
+	//     << solution.getCost() - current.getCost() << endl;
 	validateSwap(period, target1, target2, current);
       }
     }
     //cout << "loopcount: " << i << endl;
     return solution;
   }
-
   virtual bool stop() {
-    cout << solution.getCost() << " == "  << prev_cost << "?\n";
-    return solution.getCost() == prev_cost;
-  }
-
-  virtual bool selectionCondition(Solution& current) {
-    return current.getCost() < solution.getCost();
-  }
-
-  virtual void validateSwap(int period, int target1, int target2,
-			    Solution& current) {
-    prev_cost = solution.getCost();
-    solution = current;
+    if (solution.getCost() < prev_cost) {
+      return false;
+    }
+    double roll = rand();
+    //cout << roll << " < " << probability << "?\n";
+    if (roll < probability) {
+      return true;
+    } else {
+      probability *= 1 + proba_growth;
+      //cout << "new probability: " << probability << endl;
+      return false;
+    }
   }
 };
 
