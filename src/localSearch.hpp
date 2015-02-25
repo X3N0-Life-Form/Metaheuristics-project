@@ -19,19 +19,16 @@ public:
       Solution current(solution);
       prev_cost = solution.getCost();
       //i++;
-      for (int period = 0; period < number_of_periods; period++) {
-	for (int target1 = 1; target1 <= (int) boats.size(); target1++) {
-	  for (int target2 = 1; target2 <= (int) boats.size(); target2++) {
-	    //change that back into random movement if needed
-	    if (target1 == target2) continue;
-	    current.moveSwap(period, target1, target2);
-	    if (selectionCondition(current)) {
-	      cout << "cost was improved by "
-		   << solution.getCost() - current.getCost() << endl;
-	      validateSwap(period, target1, target2, current);
-	    }
-	  }
-	}
+      int period = rand() % number_of_periods;
+      int target1 = rand() % boats.size() + 1;
+      int target2 = rand() % boats.size() + 1;
+      while (target1 == target2) target1 = rand() % boats.size() + 1;
+
+      current.moveSwap(period, target1, target2);
+      if (selectionCondition(current)) {
+	cout << "cost was improved by "
+	     << solution.getCost() - current.getCost() << endl;
+	validateSwap(period, target1, target2, current);
       }
     }
     //cout << "loopcount: " << i << endl;

@@ -23,5 +23,6 @@ add_executable(meta.out
   src/heuristic.hpp
   src/heuristicFactory.hpp
   src/localSearch.hpp
+  src/localDescent.hpp
   src/tabuSearch.hpp
 )

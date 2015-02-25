@@ -3,8 +3,10 @@
 
 #include "localSearch.hpp"
 #include "tabuSearch.hpp"
+#include "localDescent.hpp"
 
 enum HeuristicType {
+  LOCAL_DESCENT,
   LOCAL_SEARCH,
   METRO,
   TABU_SEARCH
@@ -20,6 +22,8 @@ public:
       return new LocalSearch(initialSolution);
     case TABU_SEARCH:
       return new TabuSearch(initialSolution);
+    case LOCAL_DESCENT:
+      return new LocalDescent(initialSolution);
     default:
       return new LocalSearch(initialSolution);
     }

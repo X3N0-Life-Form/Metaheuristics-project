@@ -19,6 +19,8 @@ HeuristicType identifyHeuristicType(string arg) {
     return METRO;
   } else if (arg == string("ts")) {
     return TABU_SEARCH;
+  } else if (arg == string("ld")) {
+    return LOCAL_DESCENT;
   } else {
     return LOCAL_SEARCH;
   }
