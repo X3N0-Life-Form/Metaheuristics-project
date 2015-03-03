@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <ctime>
 #include "boat.h"
 #include "utils.h"
 #include "solution.h"

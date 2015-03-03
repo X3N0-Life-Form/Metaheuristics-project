@@ -1,6 +1,15 @@
 *~
 *.pdf
 
+# MSVC files
+*.ilk
+*.pdb
+*.sdf
+*.opensdf
+*.suo
+*.user
+MSVC-proj/Debug
+
 # Tex files
 *.aux
 *.log

@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "boat.h"
 
 #define LINE_SIZE 1024
