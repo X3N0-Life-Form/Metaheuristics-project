@@ -9,5 +9,5 @@ echo "==== local search ===="
 time ./meta.out --file data/specification.md --heuristic ls
 
 # tabu search
-#echo "==== tabu search ===="
-#time ./meta.out --file data/specification.md --heuristic ts
+echo "==== tabu search ===="
+time ./meta.out --file data/specification.md --heuristic ts

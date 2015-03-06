@@ -1,0 +1,91 @@
+
+==== local descent ====
+Initial cost = 311
+Final cost: 290
+==== local search ====
+Initial cost = 327
+Final cost: 291
+==== tabu search ====
+Initial cost = 324
+Final cost: 296
+==== local descent ====
+Initial cost = 319
+Final cost: 297
+==== local search ====
+Initial cost = 319
+Final cost: 277
+==== tabu search ====
+Initial cost = 324
+Final cost: 283
+==== local descent ====
+Initial cost = 327
+Final cost: 314
+==== local search ====
+Initial cost = 340
+Final cost: 302
+==== tabu search ====
+Initial cost = 313
+Final cost: 276
+==== local descent ====
+Initial cost = 331
+Final cost: 299
+==== local search ====
+Initial cost = 325
+Final cost: 279
+==== tabu search ====
+Initial cost = 310
+Final cost: 276
+==== local descent ====
+Initial cost = 316
+Final cost: 288
+==== local search ====
+Initial cost = 306
+Final cost: 271
+==== tabu search ====
+Initial cost = 330
+Final cost: 290
+==== local descent ====
+Initial cost = 322
+Final cost: 302
+==== local search ====
+Initial cost = 311
+Final cost: 281
+==== tabu search ====
+Initial cost = 305
+Final cost: 267
+==== local descent ====
+Initial cost = 315
+Final cost: 293
+==== local search ====
+Initial cost = 319
+Final cost: 278
+==== tabu search ====
+Initial cost = 323
+Final cost: 283
+==== local descent ====
+Initial cost = 322
+Final cost: 298
+==== local search ====
+Initial cost = 323
+Final cost: 280
+==== tabu search ====
+Initial cost = 345
+Final cost: 290
+==== local descent ====
+Initial cost = 334
+Final cost: 286
+==== local search ====
+Initial cost = 312
+Final cost: 276
+==== tabu search ====
+Initial cost = 340
+Final cost: 278
+==== local descent ====
+Initial cost = 323
+Final cost: 295
+==== local search ====
+Initial cost = 313
+Final cost: 283
+==== tabu search ====
+Initial cost = 327
+Final cost: 286
