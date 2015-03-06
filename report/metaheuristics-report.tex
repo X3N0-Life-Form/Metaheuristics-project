@@ -9,25 +9,29 @@
 \begin{document}
 \maketitle
 
-\tableofcontents
-\pagebreak
+%\tableofcontents
+%\pagebreak
 
 %\begin{abstract}
 %\end{abstract}
 
 \chapter{Progressive Party Problem}
 \section{Description}
-%description
-
+L'équipage de $X$ yachts doit se rencontrer au fil de $n$ périodes. Certains équipages
+vont servir d'hôtes pour d'autres au fil des périodes.
 
 \subsection{Contraintes de validité}
 
+
 \subsection{Contraintes de qualité}
 \subsubsection{Contrainte 1}
+Chaque équipage doit changer d'hôte à chaque période.
 
 \subsubsection{Contrainte 2}
+Une paire d'équipage $x$ et $y$ ne doivent se rencontrer au plus qu'une seule fois.
 
 \subsubsection{Contrainte 3}
+Un bateau ne peut contenir plus que ça capacité maximale pour une période donnée.
 
 \subsection{Calcul des coûts}
 
@@ -35,18 +39,14 @@
 
 \pagebreak
 \section{État de l'art}
+%cut that out?
+
 
 \pagebreak
 \chapter{Développement}
 \section{Structure du programme}
 \subsection{Représentation d'une solution}
 
-% nouvelle représentation:
-%	idée: se débarasser d'une contrainte de par la structure
-%		(un peu comme avec les reines)
-%	mapper les pairs de rencontres et leur attribuer une période?
-%	[équipage][periode] = liste invitéd
-%nevermind, this is all stupid
 
 \subsection{Modélisation des heuristiques}
 
@@ -64,10 +64,13 @@ on explore toutes les solutions possibles et on retient la plus améliorante.
 
 \section{Voisinages considérés}
 \subsection{One Move}
-
+On change l'hôte d'un équipage pour une période donnée.
 
 \subsection{Swap}
-On choisit deux équipages pour une période donnée, et on échange leur hote.
+On choisit deux équipages pour une période donnée, et on échange leur hôte.
+
+\section{Choix des équipages cibles}
+\subsection{Choix aléatoire}
 
 \subsection{Plus grand conflit}
 
