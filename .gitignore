@@ -15,6 +15,7 @@ MSVC-proj/Debug
 *.log
 *.toc
 *.backup
+*.gz
 
 # CMake files
 *.cmake
