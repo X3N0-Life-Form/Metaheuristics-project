@@ -21,61 +21,141 @@ L'équipage de $X$ yachts doit se rencontrer au fil de $n$ périodes. Certains �
 vont servir d'hôtes pour d'autres au fil des périodes.
 
 \subsection{Contraintes de validité}
+De manière réaliste, on équipage ne peut à la fois être hôte et être accueilli par un autre équipage,
+une telle solution devrait être refusée d'office. Cependant, par souci de simplicité cette contrainte
+n'est pas vérifiée au-delà de la solution initiale.
 
 
-\subsection{Contraintes de qualité}
+\subsection{Contraintes de qualité et calcul des coûts}
 \subsubsection{Contrainte 1}
-Chaque équipage doit changer d'hôte à chaque période.
+Chaque équipage doit changer d'hôte à chaque période. Pour une période $n$, chaque équipage ayant le
+même hôte qu'à la période $n-1$ augmente le coût de 1. Note : on interprète cela comme signifiant
+qu'un équipage donné ne devrait pas être hôte pour deux périodes consécutives.
 
 \subsubsection{Contrainte 2}
-Une paire d'équipage $x$ et $y$ ne doivent se rencontrer au plus qu'une seule fois.
+Une paire d'équipage $x$ et $y$ ne doivent se rencontrer au plus qu'une seule fois. Pour un équipage
+$x$, le coût est calculé en comptant le nombre d'équipages figurant plus d'une fois dans la liste
+des équipages rencontrés de la dernière période.
 
 \subsubsection{Contrainte 3}
-Un bateau ne peut contenir plus que ça capacité maximale pour une période donnée.
-
-\subsection{Calcul des coûts}
-
-
-
-\pagebreak
-\section{État de l'art}
-%cut that out?
+Un bateau ne peut contenir plus que sa capacité d'accueil maximale pour une période donnée. Chaque infraction
+entraîne un coût de 1. Note : l'augmentation du coût n'est pas fonction de l'ampleur du dépassement 
+de capacité.
 
 
 \pagebreak
 \chapter{Développement}
 \section{Structure du programme}
 \subsection{Représentation d'une solution}
+\paragraph{}
+Notre objet \textbf{Solution} consiste principalement en une série de vecteurs de taille $p$,
+avec $p$ = nombre de périodes, contenant des tableaux associatifs représentant les différents
+équipages et les données qui leurs sont associés :
+\begin{itemize}
+	\item hôte de la période actuelle (0 si l'équipage reste sur son propre bateau)
+	\item taux d'occupation du bateau pendant la période actuelle (sans compter l'équipage lui-même).
+	\item liste des équipage rencontrés jusqu'à la période actuelle.
+	\item l'ensemble des hôtes de la période actuelle.
+	\begin{itemize}
+		\item Note : ce champs devait être utilisé pour déterminer rapidement si un équipage est
+		hôte ou non, et aider à maintenir la contrainte de validité.
+	\end{itemize}
+\end{itemize}
 
+\paragraph{}
+La classe \textbf{Solution} contient également nos méthodes de calcul de coût, ainsi qu'une liste
+des objets bateau (\textbf{Boat}) de notre système.
 
 \subsection{Modélisation des heuristiques}
+Chaque heuristique étant dérivée de la précédente, elles font tout partie de la même famille de classe,
+avec \textbf{Heuristic} (classe abstraite) $\to$ \textbf{LocalDescent} $\to$ \textbf{LocalSearch} $\to$
+\textbf{TabuSearch}, en ne re-implémentant que les méthodes variant d'une heuristique à l'autre.
 
-
-
+\pagebreak
 \section{Heuristiques implémentées}
+Note: Les résultats d'exécution sont détaillés en fin de rapport.
 \subsection{Descente best fit}
 \paragraph{}
-La première heuristique implémentée est une exploration descendante type \textit{Best Fit}: pour un voisinage donné,
-on explore toutes les solutions possibles et on retient la plus améliorante. 
+La première heuristique implémentée est une exploration descendante type \textit{Best Fit}: pour un voisinage donné, on explore toutes les solutions possibles et on retient la plus améliorante.
+
+\paragraph{}
+Cette approche est coûteuse et a tendance à nous entraîner rapidement dans un optimum local.
+
 
 \subsection{Recherche locale}
+\paragraph{}
+La deuxième approche est dérivée de la première : il s'agit d'une exploration descendante de type \textit{First Fit}. On effectue des mouvements aléatoires en ne retenant que les améliorants.
+
+\paragraph{}
+On obtient de meilleurs résultats plus rapidement qu'avec l'heuristique précédente.
 
 \subsection{Recherche tabou}
+\paragraph{}
+L'approche finale est dérivée de la précédente : on explore de la même manière, mais en gardant un 
+historique des changements effectués. Lorsque l'on atteint un optimum local, on remonte dans la pile
+des changements effectués et on ne s'arrête que lorsque l'on a "épuisé" l'historique.
+
+\paragraph{}
+\textbf{\textit{Note importante :}} Taille maximale de l'historique déterminé à la compilation dans
+$tabuSearch.hpp$ par \textit{\#define HISTORY\_SIZE}.
+
+\paragraph{}
+Avec un historique de taille faible (5), on obtient des coûts et des temps de calcul similaires à ceux
+de la recherche locale first fit standard.
+
+\paragraph{}
+On ne constate pas d'amélioration flagrante des coûts finaux obtenus par rapport à la recherche locale
+type first fit, même en faisant varier la taille de l'historique. Note: comparativement moins d'essais
+on été réalisés pour cette heuristique, il est donc possible qu'elle n'ait pas été suffisamment
+raffinée pour être efficace.
+
+
 
 \section{Voisinages considérés}
 \subsection{One Move}
-On change l'hôte d'un équipage pour une période donnée.
+On change l'hôte d'un équipage pour une période donnée. Note : l'équipage peut choisir de devenir hôte.
 
 \subsection{Swap}
 On choisit deux équipages pour une période donnée, et on échange leur hôte.
 
 \section{Choix des équipages cibles}
 \subsection{Choix aléatoire}
+On choisit de manière complètement aléatoire un équipage autre que celui pour lequel on doit choisir
+une cible.
 
 \subsection{Plus grand conflit}
+Cette approche consiste à calculer l'équipage engendrant le plus grand nombre de conflits pour une
+période donnée, de manière à concentrer nos efforts sur les équipages ayant le plus à gagner.
+
+\paragraph{}
+Quelques implémentations basiques ont été réalisées, mais le temps manquant pour raffiner ce processus
+cette approche a été abandonnée au profit du choix aléatoire.
 
 
 \pagebreak
 \section{Résultats}
+Notes: 
+\begin{itemize}
+	\item On ne teste pas nos heuristiques sur la même instance de départ, la significativité
+	du coût final est donc douteuse.
+	\item taux d'amélioration = coût initial / coût final
+	\item h = taille de l'historique de Tabu Search
+\end{itemize}
+
+\begin{figure}[h]
+	\begin{tabular}[H]{| l | c | c | c | c |}
+		\hline
+		 & Local Descent & Local Search & Tabu Search (h = 5) &  Tabu Search (h = 30) \\
+		\hline
+		Coût final & 299 & 280 & 277 & 285 \\
+		\hline
+		Taux d'amélioration & 7.5 & 14.7 & 14.6 & 15.5 \\
+		\hline
+		Écart type & 2 & 3.9 & 3.2 & 3.5\\
+		\hline
+	\end{tabular}
+	\caption{Compilation des résultats de 15 lancements}
+\end{figure}
+
 
 \end{document}
