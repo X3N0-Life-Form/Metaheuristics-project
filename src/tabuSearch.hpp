@@ -23,6 +23,8 @@ ostream& operator<<(ostream& out, const SwapHistory& history) {
 	return out;
 }
 
+#define HISTORY_SIZE 30
+
 class TabuSearch : public LocalSearch {
 private:
   /**
@@ -32,7 +34,7 @@ private:
   unsigned int history_max_size;
 public:
   TabuSearch(Solution& solution) : LocalSearch(solution),
-	  history_max_size(5)
+	  history_max_size(HISTORY_SIZE)
   {}
 
   virtual Solution& applyHeuristic() {
